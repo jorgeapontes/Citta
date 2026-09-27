@@ -1,0 +1,13 @@
+# Estes arquivos só existem para serem incluídos (require) por login.php,
+# index.php, form.php, save.php, delete.php e generate.php — nunca devem ser
+# acessados direto pelo navegador. config.local.php (se existir em produção)
+# guarda credenciais reais do banco e precisa da mesma proteção.
+<FilesMatch "^(config|config\.local|auth|render|site-generator|helpers)\.php$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

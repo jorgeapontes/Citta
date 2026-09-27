@@ -1,0 +1,125 @@
+# ==========================================================================
+# Città Empreendimentos — configuração Apache para hospedagem tradicional
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# Redirecionamentos de URLs antigas (site anterior) — 301 permanente
+# --------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Bloqueia acesso direto à pasta interna /P/ (páginas institucionais só
+  # devem ser acessadas pelas URLs públicas de sempre — /quem-somos/,
+  # /contato/, /terras-de-genova/ — nunca por /P/...). Usa THE_REQUEST
+  # (a linha original pedida pelo navegador) para não pegar a reescrita
+  # interna feita mais abaixo.
+  RewriteCond %{THE_REQUEST} \s/+P/ [NC]
+  RewriteRule ^ - [R=404,L]
+
+  # Nunca reescrever arquivos/pastas que já existem fisicamente
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # /casas-a-venda/lote-XXX -> /casas/xxx/
+  RewriteRule ^casas-a-venda/lote-([a-zA-Z0-9]+)/?$ /casas/$1/ [R=301,L,NC]
+
+  # /casas-a-venda -> /casas/
+  RewriteRule ^casas-a-venda/?$ /casas/ [R=301,L,NC]
+
+  # /terrenos -> /lotes/
+  RewriteRule ^terrenos/?$ /lotes/ [R=301,L,NC]
+
+  # Remove index.html explícito da URL (evita conteúdo duplicado)
+  RewriteCond %{THE_REQUEST} /index\.html [NC]
+  RewriteRule ^(.*)index\.html$ /$1 [R=301,L,NC]
+
+  # --------------------------------------------------------------------
+  # Páginas institucionais organizadas fisicamente em /P/ (pasta interna,
+  # só para arrumação do repositório) mas servidas nas URLs públicas de
+  # sempre — reescrita INTERNA (sem R=301), invisível para o visitante e
+  # para o SEO/canonical já configurado nessas páginas.
+  # --------------------------------------------------------------------
+  RewriteRule ^quem-somos/?$ /P/quem-somos/ [L]
+  RewriteRule ^contato/?$ /P/contato/ [L]
+  RewriteRule ^terras-de-genova/?$ /P/terras-de-genova/ [L]
+</IfModule>
+
+# --------------------------------------------------------------------------
+# Segurança básica — proporcional a um site estático sem login/banco
+# --------------------------------------------------------------------------
+
+# Nunca listar o conteúdo de diretórios sem index
+Options -Indexes
+
+# Nunca seguir links simbólicos por engano
+Options -FollowSymLinks +SymLinksIfOwnerMatch
+
+# Bloqueia acesso direto a JSON (hardening genérico — o catálogo agora vive
+# no banco MySQL, não em arquivos JSON públicos)
+<IfModule mod_authz_core.c>
+  <FilesMatch "\.(json)$">
+    <RequireAll>
+      Require all denied
+    </RequireAll>
+  </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+  <FilesMatch "\.(json)$">
+    Order allow,deny
+    Deny from all
+  </FilesMatch>
+</IfModule>
+
+# Bloqueia arquivos sensíveis que nunca devem estar acessíveis via HTTP
+# (.sql inclui o dump do banco em db/citta.sql — nunca deve ser servido)
+<FilesMatch "(^\.env|\.gitignore|\.git.*|composer\.(json|lock)|package(-lock)?\.json|\.ps1|\.htpasswd|\.sql)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# Headers de segurança
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), camera=(), microphone=()"
+</IfModule>
+
+# MIME types corretos (evita sniffing e garante SVG/WebP servidos certo)
+<IfModule mod_mime.c>
+  AddType image/svg+xml .svg
+  AddType image/webp .webp
+  AddType image/avif .avif
+  AddType application/json .json
+</IfModule>
+
+# --------------------------------------------------------------------------
+# Cache de estáticos
+# --------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/svg+xml "access plus 30 days"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+</IfModule>
+
+# --------------------------------------------------------------------------
+# Compressão
+# --------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+# --------------------------------------------------------------------------
+# Página de erro 404 customizada
+# --------------------------------------------------------------------------
+ErrorDocument 404 /404.html

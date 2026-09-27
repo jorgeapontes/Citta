@@ -1,0 +1,148 @@
+/* Transição nativa entre páginas (View Transitions API) — progressive
+   enhancement: navegadores sem suporte simplesmente ignoram a regra e
+   navegam normalmente, sem nenhum fallback em JS necessário. */
+@view-transition {
+  navigation: auto;
+}
+
+/* Entrada de elementos ao rolar a página — ativado via IntersectionObserver
+   em js/core/reveal.js. Sem JS, os elementos permanecem visíveis (progressive
+   enhancement: .reveal já começa oculto só depois que js/core/reveal.js
+   adiciona a classe "js-reveal-ready" ao <html>). */
+
+.js-reveal-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--dur-slow) var(--ease-standard), transform var(--dur-slow) var(--ease-standard);
+}
+
+.js-reveal-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.js-reveal-ready [data-reveal-group] > * {
+  transition-delay: calc(var(--reveal-index, 0) * 70ms);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Entrada em cascata do conteúdo do hero, ao carregar a home */
+.hero__content .section__eyebrow,
+.hero__content h1,
+.hero__content > p,
+.hero__actions {
+  animation: fade-up 0.7s var(--ease-standard) backwards;
+}
+
+.hero__content .section__eyebrow {
+  animation-delay: 0.15s;
+}
+.hero__content h1 {
+  animation-delay: 0.25s;
+}
+.hero__content > p {
+  animation-delay: 0.35s;
+}
+.hero__actions {
+  animation-delay: 0.45s;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Flutuação suave e contínua do cartão com a logo, na hero section */
+.hero__brand {
+  animation: hero-brand-float 3.4s ease-in-out infinite;
+}
+
+@keyframes hero-brand-float {
+  0%, 100% {
+    transform: translateY(-50%);
+  }
+  50% {
+    transform: translateY(calc(-50% - 16px));
+  }
+}
+
+/* Leve pulso no botão flutuante do WhatsApp, para chamar atenção sem
+   incomodar — pausa automaticamente quando o usuário passa o mouse. */
+.whatsapp-float {
+  animation: whatsapp-pulse 2.6s ease-in-out infinite;
+}
+
+.whatsapp-float:hover {
+  animation-play-state: paused;
+}
+
+@keyframes whatsapp-pulse {
+  0%, 100% {
+    box-shadow: var(--shadow-md), 0 0 0 0 rgba(168, 207, 69, 0.55);
+  }
+  50% {
+    box-shadow: var(--shadow-md), 0 0 0 10px rgba(168, 207, 69, 0);
+  }
+}
+
+/* Pontinho de status "disponível" pulsando suavemente nos cards */
+.status-badge--disponivel::before {
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Menu mobile — desliza e some suavemente em vez de aparecer/sumir seco */
+.mobile-menu {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity var(--dur-base) var(--ease-standard), transform var(--dur-base) var(--ease-standard);
+}
+
+.mobile-menu.is-open {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .js-reveal-ready [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero__content .section__eyebrow,
+  .hero__content h1,
+  .hero__content > p,
+  .hero__actions {
+    animation: none;
+  }
+  .whatsapp-float,
+  .status-badge--disponivel::before,
+  .hero__brand {
+    animation: none;
+  }
+  .mobile-menu {
+    transition: none;
+  }
+}

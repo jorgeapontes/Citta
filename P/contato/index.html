@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contato | Città Empreendimentos Imobiliários</title>
+<meta name="description" content="Entre em contato com a Città Empreendimentos Imobiliários em Jundiaí/SP. Fale pelo telefone, WhatsApp, Instagram ou e-mail.">
+<link rel="canonical" href="https://condominiosemjundiai.com.br/contato/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Contato | Città Empreendimentos Imobiliários">
+<meta property="og:description" content="Fale com a Città Empreendimentos Imobiliários em Jundiaí/SP.">
+<meta property="og:url" content="https://condominiosemjundiai.com.br/contato/">
+<meta property="og:image" content="https://condominiosemjundiai.com.br/img/site/og-default.jpg">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Città Empreendimentos Imobiliários">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#025490">
+<link rel="icon" href="/img/site/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="/img/site/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/base/tokens.css">
+<link rel="stylesheet" href="/css/base/reset.css">
+<link rel="stylesheet" href="/css/base/base.css">
+<link rel="stylesheet" href="/css/components.css">
+<link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Pular para o conteúdo</a>
+<div data-include="/components/header.html"></div>
+
+<main id="main">
+  <div id="topo2" class="page-banner">
+    <div class="container">
+      <h1>Contato</h1>
+      <p id="page-lead">Fale com a nossa equipe — respondemos rapidamente.</p>
+    </div>
+  </div>
+
+  <section class="container section" data-reveal>
+    <div class="channel-grid" data-reveal-group>
+      <a class="channel-card" id="channel-whatsapp" href="https://wa.me/5511997844233" target="_blank" rel="noopener noreferrer" data-reveal>
+        <span class="channel-card__icon channel-card__icon--whatsapp"><svg class="icon" width="26" height="26" aria-hidden="true"><use href="/img/site/icons.svg#whatsapp"></use></svg></span>
+        <span class="channel-card__body">
+          <span class="channel-card__label">WhatsApp</span>
+          <span class="channel-card__value">(11) 9 9752-0379</span>
+        </span>
+      </a>
+
+      <a class="channel-card" href="https://www.instagram.com/cittaemp/" target="_blank" rel="noopener noreferrer" data-reveal>
+        <span class="channel-card__icon"><svg class="icon" width="26" height="26" aria-hidden="true"><use href="/img/site/icons.svg#instagram"></use></svg></span>
+        <span class="channel-card__body">
+          <span class="channel-card__label">Instagram</span>
+          <span class="channel-card__value">@cittaemp</span>
+        </span>
+      </a>
+
+      <!-- TODO: confirmar e-mail oficial com o cliente e atualizar o href/texto abaixo -->
+      <a class="channel-card" href="mailto:contato@condominiosemjundiai.com.br" data-reveal>
+        <span class="channel-card__icon"><svg class="icon" width="26" height="26" aria-hidden="true"><use href="/img/site/icons.svg#mail"></use></svg></span>
+        <span class="channel-card__body">
+          <span class="channel-card__label">E-mail</span>
+          <span class="channel-card__value">contato@condominiosemjundiai.com.br</span>
+        </span>
+      </a>
+
+      <a class="channel-card" href="https://www.google.com/maps/search/?api=1&query=Rua+Campinas,+176,+Vila+Hortol%C3%A2ndia,+Jundia%C3%AD,+SP" target="_blank" rel="noopener noreferrer" data-reveal>
+        <span class="channel-card__icon"><svg class="icon" width="26" height="26" aria-hidden="true"><use href="/img/site/icons.svg#map-pin"></use></svg></span>
+        <span class="channel-card__body">
+          <span class="channel-card__label">Endereço</span>
+          <span class="channel-card__value">Rua Campinas, 176 — Vila Hortolândia, Jundiaí/SP</span>
+        </span>
+      </a>
+    </div>
+
+    <div class="map-embed" style="margin-top:var(--space-8)" data-reveal>
+      <iframe
+        src="https://www.google.com/maps?q=Rua+Campinas,+176,+Vila+Hortol%C3%A2ndia,+Jundia%C3%AD,+SP&output=embed"
+        title="Localização da Città Empreendimentos no Google Maps"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen></iframe>
+    </div>
+  </section>
+</main>
+
+<div data-include="/components/footer.html"></div>
+<script src="/js/core/include.js" defer></script>
+<script src="/js/core/menu.js" defer></script>
+<script src="/js/core/reveal.js" defer></script>
+<script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var imovel = params.get('imovel');
+  if (!imovel) return;
+  document.addEventListener('DOMContentLoaded', function () {
+    var lead = document.getElementById('page-lead');
+    if (lead) lead.textContent = 'Sobre o imóvel ' + imovel + '. Fale com a gente por um dos canais abaixo.';
+    var whats = document.getElementById('channel-whatsapp');
+    if (whats) {
+      var msg = 'Olá! Tenho interesse no imóvel ' + imovel + '.';
+      whats.href = 'https://wa.me/5511997844233?text=' + encodeURIComponent(msg);
+    }
+  });
+})();
+</script>
+</body>
+</html>
